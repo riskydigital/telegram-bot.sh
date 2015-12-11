@@ -1,0 +1,45 @@
+#!/bin/bash
+. global
+l=0
+while getopts ":h :t: :f: :l:" opt; do
+  case $opt in
+    h)
+      echo -e "Usage:\n  -t Text of message\n  -f path to file\n  -l notify level"
+      ;;
+    t)
+      text="$OPTARG";;
+    l)
+      l=$((10#$OPTARG));;
+    f)
+      file="$OPTARG"
+      if [ ! -f "$file" ]; then
+        echo "$file not found"
+        file=""
+      fi
+      ;;
+    ?)
+      echo "Unknown option $OPTARG"
+      exit 1
+    ;;
+    :)
+      echo "Option -$OPTARG requires an argument."
+      exit 1
+      ;;
+  esac
+done
+
+chats=`ls $nlDir"/"`
+for chat in $chats; do
+  nl=`cat "$nlDir/$chat"` #as text
+  nl=$((10#$nl))  #as number
+  if [ $l -le $nl ]; then
+    echo -e "---\nchat:$chat\nText:$text\nfile:$file\n---"
+    send_message "$chat" "$text"
+    if [ ! -z "$file" ]; then
+      #filename=`basename $file`
+      send_doc "$chat" "$file"
+    fi
+  fi
+done
+#chatId=`cat chatIds`
+#send_message "$chatId" "Уведомление от бота!!"

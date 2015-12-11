@@ -1,0 +1,34 @@
+# bashbot, the Telegram bot written in bash.
+# Written by @topkecleon and Juan Potato (@awkward_potato)
+# http://github.com/topkecleon/bashbot
+
+# Depends on JSON.sh (http://github.com/dominictarr/JSON.sh),
+# which is MIT/Apache-licensed.
+
+# This file is public domain in the USA and all free countries.
+# If you're in Europe, and public domain does not exist, then haha.
+
+#!/bin/bash
+
+TOKEN=`cat token`
+URL='https://api.telegram.org/bot'$TOKEN
+hostname=`hostname`
+nlDir="notifyLevels"
+cycleSleep=5
+
+function send_message {
+  msg=`echo -e "Host: *$hostname*\n$2"`
+  {
+	  res=$(curl "$URL/sendMessage" -F "chat_id=$1" -F "text=$msg" -F "parse_mode=markdown" -F "reply_markup=$3")
+	} &>/dev/null
+}
+
+function send_doc {
+  {
+	  res=$(curl "$URL/sendDocument" -F "chat_id=$1" -F "document=@$2")
+  } &>/dev/null
+}
+
+function send_photo() {
+	res=$(curl "$URL/sendPhoto" -F "chat_id=$1" -F "photo=@$2")
+}

@@ -1,0 +1,15 @@
+#!/bin/bash
+cwd=$(pwd)
+tf="/usr/lib/systemd/system/tBot.service"
+echo "cwd is $cwd"
+echo "">"$tf"
+while IFS='' read -r line || [[ -n "$line" ]]; do
+  if [ "$line" == "ExecStart=" ]; then
+    line=$line"$cwd/bashbot.sh"
+  fi
+  if [ "$line" == "WorkingDirectory=" ]; then
+    line=$line"$cwd"
+  fi
+  echo "$line">>"$tf"
+done < "$cwd/tBot.service"
+cat "$tf"
