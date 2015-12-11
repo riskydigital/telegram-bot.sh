@@ -26,7 +26,8 @@ examples:
  
 #Telegram token
 Put your bot token to file "token".
-You can clone this bot to the same servers with one token, to get status from all servers.
+You can clone this bot to the same servers with one token.
+
 One host Examples:
 - /s -h arch216
 - /nl -s 1 -h nas3200
