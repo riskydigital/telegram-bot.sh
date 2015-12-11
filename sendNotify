@@ -1,4 +1,6 @@
 #!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$DIR"
 . global
 l=0
 while getopts ":h :t: :f: :l:" opt; do
@@ -41,5 +43,3 @@ for chat in $chats; do
     fi
   fi
 done
-#chatId=`cat chatIds`
-#send_message "$chatId" "Уведомление от бота!!"
