@@ -18,6 +18,13 @@ echo "Telegram bot starting dir:"$(pwd)
 #MESSAGE="$@"
 OFFSET=0
 
+{
+	res=$(curl "$URL/getMe")
+	bot_username=$(echo $res | ./JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
+} &>/dev/null
+echo "Bot user name:$bot_username"
+
+#} &>/dev/null
 #buttons="{\"keyboard\":[[\"sensors\",\"raid_status\"]],\"one_time_keyboard\":true}"
 prevActiveTime=0
 #prevActiveTime=$((10#`date +%s`))
@@ -29,7 +36,7 @@ while true; do {
 		from=$(echo $res | ./JSON.sh | egrep '\["result",0,"message","from","username"\]' | cut -f 2)
 	  OFFSET=$(echo $res | ./JSON.sh | egrep '\["result",0,"update_id"\]' | cut -f 2)
 	  MESSAGE=$(echo $res | ./JSON.sh -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
-	  message_id=$(echo $res | ./JSON.sh -s | egrep '\["result",0,"message","message_id"\]' | cut -f 2 | cut -d '"' -f 2)
+	  message_id=$(echo $res | ./JSON.sh | egrep '\["result",0,"message","message_id"\]' | cut -f 2 )
   } &>/dev/null
 
 	OFFSET=$((OFFSET+1))
@@ -74,16 +81,26 @@ while true; do {
 		  esac
 		done
 
+		echo "from:$from Message:$MESSAGE"
 		if [ ! "$toHost" == "$hostname" ]; then
 			cmd=""
 			echo "To other host"
 		fi
-		echo "from:$from Message:$MESSAGE"
+
+		cmdAr=(${cmd//\@/ })
+		cmd=${cmdAr[0]}
+		toBot=${cmdAr[1]}
+		echo "c:$cmd t:$toBot"
+		if [ ! "$toBot" == "" ] && [ ! "$toBot" == "$bot_username" ]; then
+		  echo "To other bot $toBot"
+			cmd=""
+		fi
+		
 	  case $cmd in
 			'/info'|'/start'|'help')
 			msg="Monitoring bot commands:"`cat commandsInfo`
-			send_message "$TARGET" "$msg" "{\"hide_keyboard\":false}"
-			prevActiveTime=$curTime
+			#send_message "$TARGET" "$msg" "{\"hide_keyboard\":false}"
+			#prevActiveTime=$curTime
 			msg="";;
 			'/md'|'raid_status')msg=`cat /proc/mdstat`;;
 			'/chatid') msg="ChatId="$TARGET
