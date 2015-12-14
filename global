@@ -13,11 +13,17 @@
 TOKEN=`cat token`
 URL='https://api.telegram.org/bot'$TOKEN
 hostname=`hostname`
+messageHeader="Host: *$hostname*"
 nlDir="notifyLevels"
-cycleSleep=5
+#Check for new messages in active mode
+cycleSleep=0
+#Check for new messages in stand by mode
+cycleSleepStandBy=15
+#Go to stand by mode after 
+standByAfter=60
 
 function send_message {
-  msg=`echo -e "Host: *$hostname*\n$2"`
+  msg=`echo -e "$messageHeader\n$2"`
   {
 	  res=$(curl "$URL/sendMessage" -F "chat_id=$1" -F "text=$msg" -F "parse_mode=markdown" -F "reply_markup=$3")
 	} &>/dev/null
