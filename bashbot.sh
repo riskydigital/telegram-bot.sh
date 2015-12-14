@@ -19,8 +19,8 @@ echo "Telegram bot starting dir:"$(pwd)
 OFFSET=0
 
 #buttons="{\"keyboard\":[[\"sensors\",\"raid_status\"]],\"one_time_keyboard\":true}"
-#echo $buttons
-prevActiveTime=$((10#`date +%s`))
+prevActiveTime=0
+#prevActiveTime=$((10#`date +%s`))
 while true; do {
 	curTime=$((10#`date +%s`))
 	{
@@ -83,15 +83,16 @@ while true; do {
 			'/info'|'/start'|'help')
 			msg="Monitoring bot commands:"`cat commandsInfo`
 			send_message "$TARGET" "$msg" "{\"hide_keyboard\":false}"
+			prevActiveTime=$curTime
 			msg="";;
-
-			'/md'|'raid_status') msg=`cat /proc/mdstat`;;
+			'/md'|'raid_status')msg=`cat /proc/mdstat`;;
 			'/chatid') msg="ChatId="$TARGET
 			;;
-			'/ss'|'smbstatus') msg=""
+			'/ss'|'smbstatus')
+			  msg=""
 			  smbstatus>/tmp/smbstatus
 			  send_doc "$TARGET" "/tmp/smbstatus"
-				prevActiveTime=curTime
+				prevActiveTime=$curTime
 			;;
 			'/s'|'sensors') msg=`sensors`;;
 			'/free') msg=`free -h`;;
@@ -116,7 +117,7 @@ while true; do {
 			#*) msg="$MESSAGE toHost=$toHost cmd=$cmd";;
 		esac
 		if [ ! -z "$msg" ]; then
-			prevActiveTime=curTime
+			prevActiveTime=$curTime
 		  send_message "$TARGET" "$msg"
 		fi
 	fi
@@ -126,12 +127,8 @@ while true; do {
 	if [ $elapsed -le $standByAfter ]; then
 		if [ $cycleSleep -gt 0 ]; then
 		  sleep $cycleSleep
-			echo "Active $curTime"
-		else
-			echo "no sleep $curTime"
 		fi
 	else
-		echo "Stand by $curTime"
 		sleep $cycleSleepStandBy
 	fi
 

@@ -18,9 +18,9 @@ nlDir="notifyLevels"
 #Check for new messages in active mode
 cycleSleep=0
 #Check for new messages in stand by mode
-cycleSleepStandBy=15
-#Go to stand by mode after 
-standByAfter=60
+cycleSleepStandBy=10
+#Go to stand by mode after
+standByAfter=120
 
 function send_message {
   msg=`echo -e "$messageHeader\n$2"`
