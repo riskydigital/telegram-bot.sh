@@ -1,14 +1,16 @@
 #!/bin/bash
 cwd=$(pwd)
-tf="/usr/lib/systemd/system/tBot.service"
+tf="/etc/init.d/tBot"
 echo "cwd is $cwd"
 echo "">"$tf"
+curuser=`whoami`
+curgroup=`id -gn "$curuser"`
 mkdir -p notifyLevels
 while IFS='' read -r line || [[ -n "$line" ]]; do
   case $line in
-    'ExecStart=') line=$line"$cwd/bashbot.sh";;
-    'WorkingDirectory=') line=$line"$cwd";;
+    'DIR=') line=$line$cwd;;
+    'USERGROUP=') line=$line$curuser":"$curgroup;;
   esac
   echo "$line">>"$tf"
-done < "$cwd/tBot.service"
+done < "$cwd/tBot.debian"
 cat "$tf"
