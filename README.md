@@ -22,10 +22,6 @@ A Telegram bot written in bash.
  - *2* - Dangerous (password brutforce, etc)
  - *3* - Big success events
 
-#Telegram token
-Put your bot token to file "token".
-You can clone this bot to the same servers with one token.
-
 #Send notify from server
 You can send notify from your servers, using script sendNotify
 examples:
@@ -50,33 +46,28 @@ smart - smart status
 nl - notify level
 ```
 
-#Split commands by host names
-One host Examples:
-- /s -h arch216
-- /nl -s 3 -h nas3200
-
-All hosts :
-- /s sensors from all servers
-- /nl -s 1  Retrive only errors from all servers
+#Telegram token
+- Put your bot token to file "token". You can use install script.
+- One bot(process) - One token
 
 #Setup on debian
 ```
 git clone https://github.com/RG72/telegram-bot-bash.git
 cd telegram-bot-bash
-./installDebian
+./installDebian <YourBotToken>
 ```
-InstallDebian script create init script */etc/init.d/tBot*
-Logs placed at /var/log/tBot
-Manual start run `/etc/init.d/tBot start`
+- InstallDebian script create init script */etc/init.d/tBot*
+- Logs placed at /var/log/tBot
+- Manual start run `/etc/init.d/tBot start`
 
 #Setup on Arch linux
 ```
 git clone https://github.com/RG72/telegram-bot-bash.git
 cd telegram-bot-bash
-./installArch
+./installArch <YourBotToken>
 ```
-installArch create */usr/lib/systemd/system/tBot.service*
-Manual start `systemctl start tBot`
-Enable to system boot `systemctl enable tBot`
+- installArch create */usr/lib/systemd/system/tBot.service*
+- Manual start `systemctl start tBot`
+- Enable to system boot `systemctl enable tBot`
 
 Uses [json.sh](https://github.com/dominictarr/JSON.sh).

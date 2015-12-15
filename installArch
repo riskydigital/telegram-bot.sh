@@ -1,4 +1,8 @@
 #!/bin/bash
+if [ -n "$1" ]; then
+  echo "$1" > "token"
+  echo "Token: $1 saved to file 'token'"
+fi
 cwd=$(pwd)
 tf="/usr/lib/systemd/system/tBot.service"
 echo "cwd is $cwd"

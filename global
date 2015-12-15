@@ -13,7 +13,7 @@
 TOKEN=`cat token`
 URL='https://api.telegram.org/bot'$TOKEN
 hostname=`hostname`
-messageHeader="Host: *$hostname*"
+messageHeader="Host: $hostname"
 nlDir="notifyLevels"
 #Check for new messages in active mode
 cycleSleep=0
@@ -25,16 +25,20 @@ standByAfter=120
 function send_message {
   msg=`echo -e "$messageHeader\n$2"`
   {
-	  res=$(curl "$URL/sendMessage" -F "chat_id=$1" -F "text=$msg" -F "parse_mode=markdown" -F "reply_markup=$3")
-	} &>/dev/null
-}
-
-function send_doc {
-  {
-	  res=$(curl "$URL/sendDocument" -F "chat_id=$1" -F "document=@$2")
+    res=$(curl "$URL/sendMessage" -F "chat_id=$1" -F "text=$msg")
   } &>/dev/null
 }
-
+function send_markdown_message {
+  msg=`echo -e "$messageHeader\n$2"`
+  {
+    res=$(curl "$URL/sendMessage" -F "chat_id=$1" -F "text=$msg" -F "parse_mode=markdown")
+  } &>/dev/null
+}
+function send_doc {
+  {
+    res=$(curl "$URL/sendDocument" -F "chat_id=$1" -F "document=@$2")
+  } &>/dev/null
+}
 function send_photo() {
-	res=$(curl "$URL/sendPhoto" -F "chat_id=$1" -F "photo=@$2")
+  res=$(curl "$URL/sendPhoto" -F "chat_id=$1" -F "photo=@$2")
 }

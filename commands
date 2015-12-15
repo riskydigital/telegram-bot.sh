@@ -1,0 +1,40 @@
+case $cmd in
+  '/info'|'/start'|'help')
+  msg="Monitoring bot commands:"`cat commandsInfo`
+  #send_message "$TARGET" "$msg" "{\"hide_keyboard\":true}"
+  send_markdown_message "$TARGET" "$msg"
+  prevActiveTime=$curTime
+  #Disable simple send_message
+  msg=""
+  ;;
+  '/md'|'raid_status')msg=`cat /proc/mdstat`;;
+  '/chatid') msg="ChatId="$TARGET
+  ;;
+  '/ss'|'smbstatus')
+    msg=""
+    smbstatus>/tmp/smbstatus
+    send_doc "$TARGET" "/tmp/smbstatus"
+    prevActiveTime=$curTime
+  ;;
+  '/s'|'sensors'|'/sensors')msg=`sensors`;;
+  '/free') msg=`free -h`;;
+  '/lvs') msg=`lvs`;;
+  '/pvs') msg=`pvs`;;
+  '/ifconfig') msg=`ifconfig`;;
+  '/vgs') msg=`vgs`;;
+  '/lvsd') msg=`lvs -a -o +devices`;;
+  '/smart')
+    echo "smartctl -a /dev/$drive"
+    msg=`smartctl -a /dev/$drive`;;
+  '/df') msg=`df -h`;;
+  '/nl'|'/notifyLevel')
+    nlFile="$nlDir/$TARGET"
+    if [ $notifyLevel -eq -1 ]; then
+      msg="Notify level is: "`cat "$nlFile"`
+    else
+      msg="Now notify level is $notifyLevel"
+      echo -n "$notifyLevel">"$nlFile"
+    fi
+  ;;
+  #*) msg="$MESSAGE toHost=$toHost cmd=$cmd";;
+esac

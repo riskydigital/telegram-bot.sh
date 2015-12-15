@@ -1,6 +1,5 @@
-
-/ss *smbstatus*
 /s *sensors*
+/ss *smbstatus*
 /free *memory status*
 /md *raid status*
 /lvs *lvm status*
