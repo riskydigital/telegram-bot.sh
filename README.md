@@ -6,8 +6,8 @@ A Telegram bot written in bash.
 * bash
 
 #Bot commands:
-- `/ss` smbstatus
 - `/s` sensors
+- `/ss` smbstatus
 - `/free` memory status
 - `/md` raid status
 - `/lvs` lvm status
@@ -38,8 +38,8 @@ Default notify level for new chat is 0. To change notify level use `/nl -s 3|2|1
 - Choose your bot
 - Send following description
 ```
-ss - smbstatus
 s - sensors
+ss - smbstatus
 free - memory status
 md - raid status
 lvs - lvm status
