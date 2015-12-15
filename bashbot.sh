@@ -95,13 +95,14 @@ while true; do {
 		  echo "To other bot $toBot"
 			cmd=""
 		fi
-		
+
 	  case $cmd in
 			'/info'|'/start'|'help')
 			msg="Monitoring bot commands:"`cat commandsInfo`
-			#send_message "$TARGET" "$msg" "{\"hide_keyboard\":false}"
+			#send_message "$TARGET" "$msg" "{\"hide_keyboard\":true}"
 			#prevActiveTime=$curTime
-			msg="";;
+			#msg=""
+			;;
 			'/md'|'raid_status')msg=`cat /proc/mdstat`;;
 			'/chatid') msg="ChatId="$TARGET
 			;;
@@ -111,7 +112,7 @@ while true; do {
 			  send_doc "$TARGET" "/tmp/smbstatus"
 				prevActiveTime=$curTime
 			;;
-			'/s'|'sensors') msg=`sensors`;;
+			'/s'|'sensors'|'/sensors') msg=`sensors`;;
 			'/free') msg=`free -h`;;
 			'/lvs') msg=`lvs`;;
 			'/pvs') msg=`pvs`;;
