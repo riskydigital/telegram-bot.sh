@@ -26,7 +26,7 @@ echo "Bot username:$bot_username"
 #Starting in stand by mode
 prevActiveTime=0
 
-./sendNotify -l2 -t "Bot started at $hostname"
+./sendNotify -l2 -t "Bot started"
 
 while true; do {
   newMessage=0
@@ -54,8 +54,6 @@ while true; do {
     msgWords=($MESSAGE)
     cmd=${msgWords[0]}
     args=("${msgWords[@]:1}") #removed the 1st element
-    #echo "cmd: $cmd"
-    toHost="$hostname"
     drive=""
     notifyLevel=-1
     msg=""
@@ -80,7 +78,6 @@ while true; do {
         d)
           drive=`echo "$OPTARG" | cut -c 1-3`;;
         :)
-          toHost=""
           msg="Option -$OPTARG requires an argument.";;
       esac
     done

@@ -21,8 +21,7 @@ while getopts ":h :t: :f: :l:" opt; do
       ;;
     ?)
       echo "Unknown option $OPTARG"
-      exit 1
-    ;;
+      exit 1;;
     :)
       echo "Option -$OPTARG requires an argument."
       exit 1
@@ -30,13 +29,25 @@ while getopts ":h :t: :f: :l:" opt; do
   esac
 done
 
+case "$l" in
+  1)
+    lDesc="Error";;
+  2)
+    lDesc="Danger";;
+  3)
+    lDesc="Success";;
+  *)
+    lDesc="";;
+esac
+
 chats=`ls $nlDir"/"`
 for chat in $chats; do
   nl=`cat "$nlDir/$chat"` #as text
   nl=$((10#$nl))  #as number
   if [ $l -le $nl ]; then
-    echo -e "---\nchat:$chat\nText:$text\nfile:$file\n---"
-    send_message "$chat" "$text"
+    echo -e "---\nchat:$chat file:$file\nText:$text\n---"
+    msg=`echo -e "$l $lDesc\n$text"`
+    send_message "$chat" "$msg"
     if [ ! -z "$file" ]; then
       #filename=`basename $file`
       send_doc "$chat" "$file"
