@@ -62,7 +62,8 @@ while true; do {
     cmd=${args[0]}
     #args=("${args[@]:1}")
     OPTARG=${args[1]}
-    cmdAr=(${cmd//\@/})
+    echo "cmd:$cmd"
+    cmdAr=(${cmd//\@/ })
     cmd=${cmdAr[0]}
     toBot=${cmdAr[1]}
     echo "c:$cmd t:$toBot"
