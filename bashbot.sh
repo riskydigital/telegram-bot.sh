@@ -65,7 +65,7 @@ while true; do {
     cmdAr=(${cmd//\@/})
     cmd=${cmdAr[0]}
     toBot=${cmdAr[1]}
-    #echo "c:$cmd t:$toBot"
+    echo "c:$cmd t:$toBot"
     if [ ! "$toBot" == "" ] && [ ! "$toBot" == "$bot_username" ]; then
       echo "To other bot $toBot"
       cmd=""
