@@ -16,7 +16,7 @@ case $cmd in
     send_doc "$TARGET" "/tmp/smbstatus"
     prevActiveTime=$curTime
   ;;
-  '/s'|'sensors'|'/sensors')msg=`sensors | sed -r "s/\s|\)+//g" | sed -r "s/\(high=/\//" | sed -r "s/\,crit=/\//"`;;
+  '/s'|'sensors'|'/sensors')msg=`sensors | sed -r "s/\s|\)+//g" | sed -r "s/\(high=|\(min=/\//" | sed -r "s/\,crit=|\,max=/\//"`;;
   '/free') msg=`free -h`;;
   '/pvs') msg=`pvs`;;
   '/ifconfig') msg=`ifconfig`;;
