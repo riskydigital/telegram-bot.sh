@@ -15,19 +15,21 @@ A Telegram bot written in bash.
 - `/df` disk space
 - `/ifconfig` ifconfig output
 - `/smart -d sda` smart status for sda drive
-- `/notifyLevel` `/nl` View or Set(-s) notify level
-<br />example `/notifyLevel -s 3` set notify level 3 for this chat
+- `/notifyLevel` `/nl` View or Set notify level
+<br />example `/notifyLevel 3` set notify level 3 for this chat
  - *0* - Nothing
  - *1* - Critical
  - *2* - Dangerous (password brutforce, etc)
  - *3* - Big success events
+ - *4* - Success events
+ - *...* - ...
 
 #Send notify from server
 You can send notify from your servers, using script sendNotify
 examples:
 - sendNotify -l1 -t "Critical error at service ABC"
 - /dir1/dir2/sendNotify -l3 -t "User vasya login at service samba"
-Default notify level for new chat is 0. To change notify level use `/nl -s 3|2|1|0`.
+Default notify level for new chat is 0. To change notify level use `/nl 3`.
 
 #Setup telegram commands
 - Say `/setcommands` to botfather

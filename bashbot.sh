@@ -55,36 +55,14 @@ while true; do {
     cmd=${msgWords[0]}
     args=("${msgWords[@]:1}") #removed the 1st element
     drive=""
-    notifyLevel=-1
     msg=""
-    #echo "args:${args[@]}"
-    unset OPTIND
-    while getopts ":d: :s:" opt "${args[@]}"; do
-      case $opt in
-        s)
-          if [[ "$OPTARG" =~ [^0-9]+ ]]; then
-            msg="Only numbers"
-            cmd=""
-          else
-            if [ $((10#$OPTARG)) -le 3 ] && [ $((10#$OPTARG)) -ge 0 ]; then
-              notifyLevel=$((10#$OPTARG))
-              echo "Good notify level $notifyLevel"
-            else
-              msg="Level must be from 0 to 3"
-              cmd=""
-            fi
-          fi
-          ;;
-        d)
-          drive=`echo "$OPTARG" | cut -c 1-3`;;
-        :)
-          msg="Option -$OPTARG requires an argument.";;
-      esac
-    done
-
     echo "from:$from Message:$MESSAGE"
 
-    cmdAr=(${cmd//\@/ })
+    args=( $MESSAGE )
+    cmd=${args[0]}
+    #args=("${args[@]:1}")
+    OPTARG=${args[1]}
+    cmdAr=(${cmd//\@/})
     cmd=${cmdAr[0]}
     toBot=${cmdAr[1]}
     #echo "c:$cmd t:$toBot"

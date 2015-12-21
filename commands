@@ -16,24 +16,37 @@ case $cmd in
     send_doc "$TARGET" "/tmp/smbstatus"
     prevActiveTime=$curTime
   ;;
-  '/s'|'sensors'|'/sensors')msg=`sensors`;;
+  '/s'|'sensors'|'/sensors')msg=`sensors | sed -r "s/\s|\)+//g" | sed -r "s/\(high=/\//" | sed -r "s/\,crit=/\//"`;;
   '/free') msg=`free -h`;;
-  '/lvs') msg=`lvs`;;
   '/pvs') msg=`pvs`;;
   '/ifconfig') msg=`ifconfig`;;
   '/vgs') msg=`vgs`;;
-  '/lvsd') msg=`lvs -a -o +devices`;;
-  '/smart')
-    echo "smartctl -a /dev/$drive"
-    msg=`smartctl -a /dev/$drive`;;
-  '/df') msg=`df -h`;;
+  '/lvs') msg=`lvs | sed -r "s/\s+/\n/g"`;;
+  '/lvsd') msg=`lvs -a -o +devices | sed -r "s/\s+/\n/g"`;;
+  '/smart'|'/smartctl')
+    if [ "$OPTARG" == "" ]; then
+      msg="example \`/smart sda\`"
+    else
+      drive=`echo "$OPTARG" | cut -c 1-3`
+      echo "smartctl -a /dev/$drive"
+      msg=`smartctl -a /dev/$drive`
+    fi
+    ;;
+  '/df') msg=`df -h | sed -r "s/^/\n/" | sed -r "s/\s+/\n/g"`;;
   '/nl'|'/notifyLevel')
     nlFile="$nlDir/$TARGET"
-    if [ $notifyLevel -eq -1 ]; then
+    if [ "$OPTARG" == "" ]; then
       msg="Notify level is: "`cat "$nlFile"`
+    elif [[ "$OPTARG" =~ [^0-9]+ ]]; then
+      msg="Only numbers"
     else
-      msg="Now notify level is $notifyLevel"
-      echo -n "$notifyLevel">"$nlFile"
+      if [ $((10#$OPTARG)) -ge 0 ]; then
+        notifyLevel=$((10#$OPTARG))
+        msg="Now notify level is $notifyLevel"
+        echo -n "$notifyLevel">"$nlFile"
+      else
+        msg="Level must be bigger or equal 0"
+      fi
     fi
   ;;
   #*) msg="$MESSAGE toHost=$toHost cmd=$cmd";;
