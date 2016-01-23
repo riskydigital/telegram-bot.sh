@@ -15,6 +15,8 @@ A Telegram bot written in bash.
 - `/df` disk space
 - `/ifconfig` ifconfig output
 - `/smart -d sda` smart status for sda drive
+- `/lock` allow only chats from notifyLevels dir
+- `/unlock` - allow any users to chat with bot
 - `/notifyLevel` `/nl` View or Set notify level
 <br />example `/notifyLevel 3` set notify level 3 for this chat
  - *0* - Nothing
@@ -46,6 +48,8 @@ df - disk space
 ifconfig - Network configuration
 smart - smart status
 nl - notify level
+lock - lock from new chats
+unlock - allow any users to chat with bot
 ```
 
 #Telegram token

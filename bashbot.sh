@@ -62,17 +62,31 @@ while true; do {
     cmd=${args[0]}
     #args=("${args[@]:1}")
     OPTARG=${args[1]}
-    echo "cmd:$cmd"
+    #echo "cmd:$cmd"
     cmdAr=(${cmd//\@/ })
     cmd=${cmdAr[0]}
     toBot=${cmdAr[1]}
-    echo "c:$cmd t:$toBot"
+    #echo "c:$cmd t:$toBot"
     if [ ! "$toBot" == "" ] && [ ! "$toBot" == "$bot_username" ]; then
       echo "To other bot $toBot"
       cmd=""
     fi
-    #include a case from file commands
-    . commands
+    nlFile="$nlDir/$TARGET"
+    processCommands=0
+    if [ -f "$nlFile" ]; then
+      processCommands=1
+    elif [ ! -f "lockState" ]; then
+      processCommands=1
+    elif [ `cat lockState` == "unlocked" ]; then
+      processCommands=1
+    fi
+
+    if [ $processCommands -eq 1 ]; then
+      #include a case from file commands
+      . commands
+    else
+      msg="Forbidden"
+    fi
 
     if [ ! -z "$msg" ]; then
       prevActiveTime=$curTime

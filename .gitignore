@@ -1,2 +1,5 @@
 token
-notifyLevels
+lockState
+lastOffset
+notifyLevels/*
+cmds/*
