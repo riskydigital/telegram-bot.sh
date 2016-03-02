@@ -3,13 +3,22 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR"
 . global
 l=0
-while getopts ":h :t: :f: :l:" opt; do
+markdown=0
+noDesc=0
+while getopts ":h :t: :f: :l: :n :m" opt; do
+  #echo "$opt"
   case $opt in
     h)
       echo -e "Usage:\n  -t Text of message\n  -f path to file\n  -l notify level"
+      echo -e "  -n No description\n  -m Text as markdown"
+      exit 0
       ;;
     t)
       text="$OPTARG";;
+    m)
+      markdown=1;;
+    n)
+      noDesc=1;;
     l)
       l=$((10#$OPTARG));;
     f)
@@ -45,9 +54,17 @@ for chat in $chats; do
   nl=`cat "$nlDir/$chat"` #as text
   nl=$((10#$nl))  #as number
   if [ $l -le $nl ]; then
-    echo -e "---\nchat:$chat file:$file\nText:$text\n---"
-    msg=`echo -e "$l $lDesc\n$text"`
-    send_message "$chat" "$msg"
+    if [ $noDesc -eq 0 ]; then
+      msg=`echo -e "$l $lDesc\n$text"`
+    else
+      msg=`echo -e "$l $text"`
+    fi
+    echo -e "---\nchat:$chat file:$file\nText:$msg"
+    if [ $markdown -eq 0 ]; then
+      send_message "$chat" "$msg"
+    else
+      send_markdown_message "$chat" "$msg"
+    fi
     if [ ! -z "$file" ]; then
       #filename=`basename $file`
       send_doc "$chat" "$file"
