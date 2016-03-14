@@ -1,6 +1,5 @@
 URL='https://api.telegram.org/bot'$TOKEN
 JSON="./JSON.sh"
-TMP="/tmp/bashbot"
 
 TIME=10
 TEXEC="wget -qO- -T $TIME"

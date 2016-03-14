@@ -5,7 +5,9 @@
 # http://github.com/RG72/bashbot
 # http://github.com/viralex/bashbot
 
-#TODO ask and generate config.sh automatically
+VERSION="0.1"
+
+
 [ -f config.sh ] && source ./config.sh || (echo "please configure: copy config.sh.orig => config.sh and set token." && exit 1)
 
 [ -f functions.sh ] && source ./functions.sh || ( echo "err... sorry I must go!" && exit 1)
@@ -49,9 +51,8 @@ while true; do
     if [ $enable_commands -eq 1 ]; then
       for f in $command_dir/* ; do
           if grep -q "'$cmd')" "$f"; then
-            echo "command found at: \"$f\""
-            #disable blocks of commands using exec bit
-            [ -x $f ] && source ./$f || msg="command disabled" 
+            echo "command found at: \"$f\"" #disable blocks of commands using exec bit
+            [ -x $f ] && source ./$f || msg="command disabled"
             break
           fi
       done
