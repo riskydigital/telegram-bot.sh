@@ -5,7 +5,7 @@
 # http://github.com/RG72/bashbot
 # http://github.com/viralex/bashbot
 
-source ./global
+source ./global.sh
 echo "bot_dir: "$(pwd)
 
 OFFSET=0
@@ -15,7 +15,7 @@ get_name &>/dev/null
 bot_username=$res
 echo "bot_username: $bot_username"
 
-./sendNotify -s0 -t "$bot_username started"
+./notify.sh -s0 -t "$bot_username started"
 
 while true; do
 {
@@ -57,7 +57,7 @@ while true; do
     #fi
 
     if [ $enable_commands -eq 1 ]; then
-      source ./commands
+      source ./commands.sh
     else
       msg="forbidden"
     fi

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-source ./global
+source ./global.sh
 
 markdown=0
 s=0

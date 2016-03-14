@@ -8,6 +8,7 @@ TMP="/tmp/bashbot"
 TIME=10
 
 last_offset_file="/tmp/last_offset"
+lock_file="/tmp/lock"
 
 chat_dir="chats"
 command_dir="commands"

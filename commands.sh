@@ -3,17 +3,16 @@
 case $cmd in
   '/lock')
     msg="Locked"
-    echo "locked">lockState
+    echo "locked">$lock_file
     ;;
   '/unlock')
     msg="Unlocked"
-    echo "unlocked">lockState
+    echo "unlocked">$lock_file
     ;;
-  '/info'|'/start'|'help'|'/help')
+  '/info'|'/start'|'/help')
   msg="Monitoring bot commands:"`cat commandsInfo`
-  #send_message "$TARGET" "$msg" "{\"hide_keyboard\":true}"
   send_markdown_message "$TARGET" "$msg"
-  prevActiveTime=$curTime
+  PREV_TIME=$CURR_TIME
   #Disable simple send_message
   msg=""
   ;;
@@ -24,7 +23,7 @@ case $cmd in
     msg=""
     smbstatus>/tmp/smbstatus
     send_doc "$TARGET" "/tmp/smbstatus"
-    prevActiveTime=$curTime
+    PREV_TIME=$CURR_TIME
   ;;
   '/s'|'sensors'|'/sensors')msg=`sensors | sed -r "s/\s|\)+//g" | sed -r "s/\(high=|\(min=/\//" | sed -r "s/\,crit=|\,max=/\//"`;;
   '/free') msg=`free -h`;;
