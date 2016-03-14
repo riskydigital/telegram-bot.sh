@@ -1,107 +1,82 @@
-#!/bin/bash
-
+#!/bin/sh
 # bashbot, the Telegram bot written in bash.
-# Written by @topkecleon and Juan Potato (@awkward_potato)
+# Authors by @topkecleon, Juan Potato (@awkward_potato) and RG72
 # http://github.com/topkecleon/bashbot
+# http://github.com/RG72/bashbot
+# http://github.com/viralex/bashbot
 
-# Depends on JSON.sh (http://github.com/dominictarr/JSON.sh),
-# which is MIT/Apache-licensed.
+source ./global
+echo "bot_dir: "$(pwd)
 
-# This file is public domain in the USA and all free countries.
-# If you're in Europe, and public domain does not exist, then haha.
-
-echo "Telegram bot dir:"$(pwd)
-. global
-#MESSAGE="$@"
 OFFSET=0
+PREV_TIME=0
 
+get_name &>/dev/null
+bot_username=$res
+echo "bot_username: $bot_username"
+
+./sendNotify -s0 -t "$bot_username started"
+
+while true; do
 {
-  res=$(curl "$URL/getMe")
-  bot_username=$(echo $res | ./JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
-} &>/dev/null
-echo "Bot username:$bot_username"
-
-#buttons="{\"keyboard\":[[\"sensors\",\"raid_status\"]],\"one_time_keyboard\":true}"
-
-#Starting in stand by mode
-prevActiveTime=0
-
-./sendNotify -l2 -t "Bot started"
-
-while true; do {
-  newMessage=0
-  while [ $newMessage -eq 0 ]; do
+  new_message=0
+  while [ $new_message -eq 0 ]; do
     {
-      res=$(curl $URL\/getUpdates\?offset=$OFFSET\&limit=1)
+      get_message $OFFSET
       if [ ! "$res" == '{"ok":true,"result":[]}' ]; then
-        newMessage=1
-        TARGET=$(echo $res | ./JSON.sh | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
-        from=$(echo $res | ./JSON.sh | egrep '\["result",0,"message","from","username"\]' | cut -f 2)
-        OFFSET=$(echo $res | ./JSON.sh | egrep '\["result",0,"update_id"\]' | cut -f 2)
-        MESSAGE=$(echo $res | ./JSON.sh -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
-        message_id=$(echo $res | ./JSON.sh | egrep '\["result",0,"message","message_id"\]' | cut -f 2 )
-        echo "o:$OFFSET r:$res"
+        TARGET=$(echo $res | $JSON | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
+        FROM=$(echo $res | $JSON | egrep '\["result",0,"message","from","username"\]' | cut -f 2)
+        OFFSET=$(echo $res | $JSON | egrep '\["result",0,"update_id"\]' | cut -f 2)
+        MESSAGE=$(echo $res | $JSON -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
+        MESSAGE_ID=$(echo $res | $JSON | egrep '\["result",0,"message","message_id"\]' | cut -f 2 )
+        new_message=1
       fi
     } &>/dev/null
-	done
+  done
 
-  curTime=$((10#`date +%s`))
+  CURR_TIME=$((10#`date +%s`))
   OFFSET=$((OFFSET+1))
-  #echo "$MESSAGE"
 
   if [ $OFFSET != 1 ]; then
-    echo "$OFFSET">lastOffset
-    msgWords=($MESSAGE)
-    cmd=${msgWords[0]}
-    args=("${msgWords[@]:1}") #removed the 1st element
-    drive=""
-    msg=""
-    echo "from:$from Message:$MESSAGE"
+    echo "$OFFSET" > $last_offset_file
+    cmd=${MESSAGE[0]}
+    args=("${MESSAGE[@]:1}")
+    echo "from: $FROM Message: $MESSAGE"
 
-    args=( $MESSAGE )
-    cmd=${args[0]}
-    #args=("${args[@]:1}")
-    OPTARG=${args[1]}
-    #echo "cmd:$cmd"
-    cmdAr=(${cmd//\@/ })
-    cmd=${cmdAr[0]}
-    toBot=${cmdAr[1]}
+    #args=($MESSAGE)
+    #cmd=${args[0]}
+    #OPTARG=${args[1]}
+    #cmdAr=(${cmd//\@/ })
+    #cmd=${cmdAr[0]}
+    #toBot=${cmdAr[1]}
     #echo "c:$cmd t:$toBot"
-    if [ ! "$toBot" == "" ] && [ ! "$toBot" == "$bot_username" ]; then
-      echo "To other bot $toBot"
-      cmd=""
-    fi
-    nlFile="$nlDir/$TARGET"
-    processCommands=0
-    if [ -f "$nlFile" ]; then
-      processCommands=1
-    elif [ ! -f "lockState" ]; then
-      processCommands=1
-    elif [ `cat lockState` == "unlocked" ]; then
-      processCommands=1
-    fi
+    
+    #if [ ! "$toBot" == "" ] && [ ! "$toBot" == "$bot_username" ]; then
+    #  echo "To other bot $toBot"
+    #  cmd=""
+    #fi
 
-    if [ $processCommands -eq 1 ]; then
-      #include a case from file commands
-      . commands
+    if [ $enable_commands -eq 1 ]; then
+      source ./commands
     else
-      msg="Forbidden"
+      msg="forbidden"
     fi
 
     if [ ! -z "$msg" ]; then
-      prevActiveTime=$curTime
+      PREV_TIME=$CURR_TIME
       send_message "$TARGET" "$msg"
     fi
   fi
 
-  elapsed=$((curTime-prevActiveTime))
-
-  if [ $elapsed -le $standByAfter ]; then
-    if [ $cycleSleep -gt 0 ]; then
-      sleep $cycleSleep
+echo $elapsed
+  elapsed=$((CURR_TIME-PREV_TIME))
+  if [ $elapsed -le $standby ]; then
+    if [ $cycle_sleep -gt 0 ]; then
+      sleep $cycle_sleep
     fi
   else
-    sleep $cycleSleepStandBy
+    echo "standby: sleep for $standby_sleep ..."
+    sleep $standby_sleep
   fi
-
-} done
+}
+done

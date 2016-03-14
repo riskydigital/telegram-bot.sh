@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/sh
+
 case $cmd in
   '/lock')
     msg="Locked"

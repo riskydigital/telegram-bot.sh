@@ -7,7 +7,7 @@ Type=simple
 ExecStart=
 WorkingDirectory=
 Restart=always
-PIDFile=/run/tBot.pid
+PIDFile=/run/telegram-bash-bot.pid
 
 [Install]
 WantedBy=multi-user.target

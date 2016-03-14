@@ -1,9 +1,24 @@
-#bashbot
+#Bashbot
 A Telegram bot written in bash.
 
-#Requiment:
-* curl
-* bash
+Uses [json.sh](https://github.com/dominictarr/JSON.sh).
+
+#Why
+* Why use shell scripts to implement this bot?
+For me this is a really simple implementation which fits perfectly for my OpenWRT
+router without the need for any extra dependency like python, lua.
+* Why changing curl to wget? because I do not have curl on OpenWRT,
+I only have wget.
+
+#Requiments:
+* wget (curl)
+* sh
+
+#Send notify from server
+You can send notify from your servers, using script sendNotify
+examples:
+- /dir1/dir2/sendNotify -l1 -t "SSH Login $USER@$HOSTNAME"
+- /dir1/dir2/sendNotify -l3 -t "User viralex login at service samba"
 
 #Bot commands:
 - `/s` sensors
@@ -26,54 +41,6 @@ A Telegram bot written in bash.
  - *4* - Success events
  - *...* - ...
 
-#Send notify from server
-You can send notify from your servers, using script sendNotify
-examples:
-- sendNotify -l1 -t "Critical error at service ABC"
-- /dir1/dir2/sendNotify -l3 -t "User vasya login at service samba"
-Default notify level for new chat is 0. To change notify level use `/nl 3`.
-
-#Setup telegram commands
-- Say `/setcommands` to botfather
-- Choose your bot
-- Send following description
-```
-s - sensors
-ss - smbstatus
-free - memory status
-md - raid status
-lvs - lvm status
-lvsd - Datailed lvm status
-df - disk space
-ifconfig - Network configuration
-smart - smart status
-nl - notify level
-lock - lock from new chats
-unlock - allow any users to chat with bot
-```
-
 #Telegram token
 - Put your bot token to file "token". You can use install script.
 - One bot(process) - One token
-
-#Setup on debian
-```
-git clone https://github.com/RG72/telegram-bot-bash.git
-cd telegram-bot-bash
-./installDebian <YourBotToken>
-```
-- InstallDebian script create init script */etc/init.d/tBot*
-- Logs placed at /var/log/tBot
-- Manual start run `/etc/init.d/tBot start`
-
-#Setup on Arch linux
-```
-git clone https://github.com/RG72/telegram-bot-bash.git
-cd telegram-bot-bash
-./installArch <YourBotToken>
-```
-- installArch create */usr/lib/systemd/system/tBot.service*
-- Manual start `systemctl start tBot`
-- Enable to system boot `systemctl enable tBot`
-
-Uses [json.sh](https://github.com/dominictarr/JSON.sh).

@@ -1,5 +1,3 @@
 token
-lockState
-lastOffset
-notifyLevels/*
-cmds/*
+chats/*
+cmd/*

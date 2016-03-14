@@ -16,24 +16,30 @@ CMD="./bashbot.sh > $LOG 2>&1"
 PIDFILE=$DIR"/"tBot.pid
 USERGROUP=
 
-function start() {
-  echo "Running tBot As "$USERGROUP"  pidFile="$PIDFILE
+function start()
+{
+  echo "Running telegram-bash-bot As "$USERGROUP"  pidFile="$PIDFILE
   echo "Create log file $LOG"
   echo "">$LOG
   chown $USERGROUP $LOG
   chmod 750 $LOG
-  start-stop-daemon --chuid $USERGROUP -d "$DIR" -Sbvmp $PIDFILE -x  /bin/bash -- -c "$CMD"
+  start-stop-daemon --chuid $USERGROUP -d "$DIR" -Sbvmp $PIDFILE -x  /bin/sh -- -c "$CMD"
 }
-function stop(){
+
+function stop()
+{
   PID=`cat $PIDFILE`
   echo "Stoping pidFile="$PIDFILE" PID="$PID
   pkill -TERM -P $PID
   start-stop-daemon -Kvp "$PIDFILE"
 }
-function status(){
+
+function status()
+{
   echo "Try get status"
   start-stop-daemon -T -p "$PIDFILE"
 }
+
 case "$1" in
 start)
   start
