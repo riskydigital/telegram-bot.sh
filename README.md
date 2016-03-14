@@ -15,10 +15,10 @@ I only have wget.
 * sh
 
 #Send notify from server
-You can send notify from your servers, using script sendNotify
+You can send notify from your servers, using script notify.sh
 examples:
-- /dir1/dir2/sendNotify -l1 -t "SSH Login $USER@$HOSTNAME"
-- /dir1/dir2/sendNotify -l3 -t "User viralex login at service samba"
+- /dir1/dir2/notify.sh -s0 -t "SSH Login $USER@$HOSTNAME"
+- /dir1/dir2/notify.sh -s0 -t "User viralex login at service samba"
 
 #Bot commands:
 - `/s` sensors
