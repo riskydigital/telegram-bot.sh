@@ -1,6 +1,8 @@
 #!/bin/sh
+#TODO merge to bashbot.sh
 
-source ./global.sh
+[ -f config.sh ] && source ./conifg.sh || echo "please configure: copy config.sh.orig => config.sh and set token."
+[ -f functions.sh ] && source ./functions.sh || ( echo "err... sorry I must go!" && exit 1)
 
 markdown=0
 s=0

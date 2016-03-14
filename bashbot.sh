@@ -5,18 +5,20 @@
 # http://github.com/RG72/bashbot
 # http://github.com/viralex/bashbot
 
-source ./global.sh
-echo "bot_dir: "$(pwd)
+#TODO ask and generate config.sh automatically
+[ -f config.sh ] && source ./config.sh || (echo "please configure: copy config.sh.orig => config.sh and set token." && exit 1)
 
-OFFSET=0
-PREV_TIME=0
+[ -f functions.sh ] && source ./functions.sh || ( echo "err... sorry I must go!" && exit 1)
+
+echo "bot_dir: "$(pwd)
 
 get_name &>/dev/null
 bot_username=$res
 echo "bot_username: $bot_username"
+[ $enable_notify_login -eq 1 ] && ./notify.sh -s0 -t "$bot_username started"
 
-./notify.sh -s0 -t "$bot_username started"
-
+OFFSET=0
+PREV_TIME=0
 while true; do
 {
   new_message=0
@@ -41,41 +43,32 @@ while true; do
     echo "$OFFSET" > $last_offset_file
     cmd=${MESSAGE[0]}
     args=("${MESSAGE[@]:1}")
-    echo "from: $FROM Message: $MESSAGE"
+    echo "$FROM $MESSAGE"
 
-    #args=($MESSAGE)
-    #cmd=${args[0]}
-    #OPTARG=${args[1]}
-    #cmdAr=(${cmd//\@/ })
-    #cmd=${cmdAr[0]}
-    #toBot=${cmdAr[1]}
-    #echo "c:$cmd t:$toBot"
-    
-    #if [ ! "$toBot" == "" ] && [ ! "$toBot" == "$bot_username" ]; then
-    #  echo "To other bot $toBot"
-    #  cmd=""
-    #fi
-
+    msg=""
     if [ $enable_commands -eq 1 ]; then
-      source ./commands.sh
-    else
-      msg="forbidden"
+      for f in $command_dir/* ; do
+          if grep -q "'$cmd')" "$f"; then
+            echo "command found at: \"$f\""
+            #disable blocks of commands using exec bit
+            [ -x $f ] && source ./$f || msg="command disabled" 
+            break
+          fi
+      done
     fi
 
     if [ ! -z "$msg" ]; then
       PREV_TIME=$CURR_TIME
-      send_message "$TARGET" "$msg"
+      send_message "$TARGET" "$msg" &>/dev/null
     fi
   fi
 
-echo $elapsed
   elapsed=$((CURR_TIME-PREV_TIME))
   if [ $elapsed -le $standby ]; then
     if [ $cycle_sleep -gt 0 ]; then
       sleep $cycle_sleep
     fi
   else
-    echo "standby: sleep for $standby_sleep ..."
     sleep $standby_sleep
   fi
 }

@@ -1,23 +1,8 @@
-#!/bin/sh
-
-TOKEN=`cat token`
 URL='https://api.telegram.org/bot'$TOKEN
 JSON="./JSON.sh"
 TMP="/tmp/bashbot"
 
 TIME=10
-
-last_offset_file="/tmp/last_offset"
-lock_file="/tmp/lock"
-
-chat_dir="chats"
-command_dir="commands"
-
-enable_commands=1
-cycle_sleep=0
-standby_sleep=10
-standby=120
-
 TEXEC="wget -qO- -T $TIME"
 
 function telegram_exec

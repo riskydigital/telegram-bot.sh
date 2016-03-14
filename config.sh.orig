@@ -1,0 +1,14 @@
+TOKEN=""
+
+chat_dir="chats"
+command_dir="commands"
+
+last_offset_file="/tmp/last_offset"
+lock_file="/tmp/lock"
+
+enable_notify_login=0
+enable_commands=1
+
+cycle_sleep=0
+standby_sleep=1
+standby=30

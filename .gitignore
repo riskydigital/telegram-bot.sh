@@ -1,3 +1,4 @@
-token
+config.sh
 chats/*
-cmd/*
+commands/*
+
