@@ -1,4 +1,4 @@
-#Bashbot
+#shbot
 A Telegram bot written in shell language script.
 
 Uses [json.sh](https://github.com/dominictarr/JSON.sh).
