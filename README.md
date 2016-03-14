@@ -1,17 +1,19 @@
 #Bashbot
-A Telegram bot written in bash.
+A Telegram bot written in shell language script.
 
 Uses [json.sh](https://github.com/dominictarr/JSON.sh).
 
 #Why
-* Why use shell scripts to implement this bot?
-For me this is a really simple implementation which fits perfectly for my OpenWRT
-router without the need for any extra dependency like python, lua.
+* Why using shell scripts?
+This is a really simple implementation which fits my needs.
+I want to run this on several machines including an OpenWRT router 
+without using any extra dependency like python, lua.
+
 * Why changing curl to wget? because I do not have curl on OpenWRT,
-I only have wget.
+I only use wget and having both is a waste of space.
 
 #Requiments:
-* wget (curl)
+* wget
 * sh
 
 #Send notify from server
