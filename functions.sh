@@ -23,7 +23,7 @@ function get_message
 function get_name
 {
   res=`telegram_exec getMe`
-  res=$(echo $res | ./JSON.sh -s | egrep '\["result","username"\]' \
+  res=$(echo $res | $JSON -s | egrep '\["result","username"\]' \
       | cut -f 2 | cut -d '"' -f 2)
 }
 
