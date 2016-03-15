@@ -1,5 +1,7 @@
 TOKEN=""
 
+TMP="/tmp/bashbot"
+
 chat_dir="chats"
 command_dir="commands"
 
@@ -8,6 +10,7 @@ lock_file="/tmp/lock"
 
 enable_notify_login=0
 enable_commands=1
+enable_command_not_found=0
 
 cycle_sleep=0
 standby_sleep=1

@@ -17,13 +17,14 @@ I only use wget and having both is a waste of space.
 * sh
 
 #Send message mode
-You can send notify from your servers
+You can send simple messages
 examples:
 - /dir1/dir2/telegram-bot.sh -t "SSH Login $USER@$HOSTNAME"
 - /dir1/dir2/telegram-bot.sh -t "User viralex login at service samba"
 
 #Daemon mode
-You can implement different command modules
+You can implement different command modules under modules_dir
 
 #Configuration
-- Put your bot token in config.sh
+- copy default/config.sh.orig, put in your bot token and rename to config.sh
+- put chatid under chats/<chatid>

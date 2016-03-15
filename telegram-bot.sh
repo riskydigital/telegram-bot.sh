@@ -66,7 +66,7 @@ function run_daemon
 
       command_found=no
       if [ $enable_commands -eq 1 ]; then
-        for f in $command_dir/* ; do
+        for f in $modules_dir/* ; do
             if grep -q "'$cmd')" "$f"; then  # or $cmd| or |$cmd
               echo "command found at: \"$f\"" #disable blocks of commands using exec bit
               command_found=yes
