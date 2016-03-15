@@ -3,9 +3,9 @@
 # Original authors by @topkecleon, Juan Potato (@awkward_potato) and RG72
 # http://github.com/topkecleon/bashbot
 # http://github.com/RG72/telegram-bot-bash
-# http://github.com/viralex/telegram-sh-bot
+# http://github.com/viralex/telegram-bot.sh
 
-PNAME="telegram-sh-bot"
+PNAME="telegram-bot.sh"
 VERSION="0.1"
 
 #### init 
