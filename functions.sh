@@ -17,14 +17,23 @@ function send_message
 
 function get_message
 {
-  res=`telegram_exec "getUpdates?offset=$1&limit=1"`
+  ret=`telegram_exec "getUpdates?offset=$1&limit=1"`
+
+  if [ ! "$ret" == '{"ok":true,"result":[]}' ]; then
+    TARGET=$(echo $ret | $JSON | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
+    FROM=$(echo $ret | $JSON | egrep '\["result",0,"message","from","username"\]' | cut -f 2)
+    OFFSET=$(echo $ret | $JSON | egrep '\["result",0,"update_id"\]' | cut -f 2)
+    MESSAGE=$(echo $ret | $JSON -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
+    MESSAGE_ID=$(echo $ret | $JSON | egrep '\["result",0,"message","message_id"\]' | cut -f 2 )
+    return 0
+  fi
+  return 1
 }
 
 function get_name
 {
   res=`telegram_exec getMe`
-  res=$(echo $res | $JSON -s | egrep '\["result","username"\]' \
-      | cut -f 2 | cut -d '"' -f 2)
+  res=$(echo $res | $JSON -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
 }
 
 function send_markdown_message

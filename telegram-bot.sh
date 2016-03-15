@@ -8,7 +8,7 @@
 PNAME="telegram-bot.sh"
 VERSION="0.1"
 
-#### init 
+#### init
 
 [ -f config.sh ] && source ./config.sh || (echo "please configure: copy config.sh.orig => config.sh and set token." && exit 1)
 [ -f functions.sh ] && source ./functions.sh || ( echo "err... sorry I must go!" && exit 1)
@@ -23,7 +23,7 @@ function opt_version
 
 function opt_help
 {
-  echo -e "help:\n123"
+  echo -e "help:\n"
   exit 0
 }
 
@@ -34,25 +34,15 @@ function run_daemon
   get_name
   bot_username=$res
   echo "bot_username: $bot_username"
-  [ $enable_notify_login -eq 1 ] && ./notify.sh -s0 -t "$bot_username started"
+  [ $enable_notify_login -eq 1 ] && ./$0 -t "$bot_username started"
 
   OFFSET=0
   PREV_TIME=0
   while true; do
   {
-    new_message=0
-    while [ $new_message -eq 0 ]; do
-      {
-        get_message $OFFSET
-        if [ ! "$res" == '{"ok":true,"result":[]}' ]; then
-          TARGET=$(echo $res | $JSON | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
-          FROM=$(echo $res | $JSON | egrep '\["result",0,"message","from","username"\]' | cut -f 2)
-          OFFSET=$(echo $res | $JSON | egrep '\["result",0,"update_id"\]' | cut -f 2)
-          MESSAGE=$(echo $res | $JSON -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
-          MESSAGE_ID=$(echo $res | $JSON | egrep '\["result",0,"message","message_id"\]' | cut -f 2 )
-          new_message=1
-        fi
-      } &>/dev/null
+    while true; do
+      get_message $OFFSET
+      [ $? == 0 ] && break;
     done
 
     CURR_TIME=$((10#`date +%s`))
@@ -62,7 +52,7 @@ function run_daemon
       echo "$OFFSET" > $last_offset_file
       cmd=${MESSAGE[0]}
       args=("${MESSAGE[@]:1}")
-      echo "$FROM $MESSAGE"
+      echo "recv: $FROM $MESSAGE"
 
       command_found=no
       if [ $enable_commands -eq 1 ]; then
