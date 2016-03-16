@@ -1,5 +1,5 @@
 URL='https://api.telegram.org/bot'$TOKEN
-JSON="./JSON.sh"
+JSON="$pdir/JSON.sh"
 
 TIME=10
 TEXEC="wget -qO- --no-check-certificate -T $TIME"
@@ -11,8 +11,12 @@ telegram_exec()
 
 send_message()
 {
-  #echo "SEND $1 \"$2\""
   telegram_exec "sendMessage" "chat_id=$1&text=$2"
+}
+
+send_message_all()
+{
+  :
 }
 
 get_message()

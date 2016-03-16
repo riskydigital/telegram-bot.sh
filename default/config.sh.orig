@@ -1,9 +1,10 @@
 TOKEN=""
+OWNER=""
 
-TMP="/tmp/bashbot"
+TMP="/tmp/tbot"
 
 chat_dir="chats"
-command_dir="commands"
+modules_dir="commands"
 
 last_offset_file="/tmp/last_offset"
 lock_file="/tmp/lock"

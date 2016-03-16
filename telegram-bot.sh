@@ -10,9 +10,9 @@ PNAME=`basename $0`
 VERSION="0.1"
 
 #### init
-
-[ -f config.sh ] && source ./config.sh || (echo "please configure: copy config.sh.orig => config.sh and set token." && exit 1)
-[ -f functions.sh ] && source ./functions.sh || ( echo "err... sorry I must go!" && exit 1)
+pdir=$(dirname "$0")
+[ -f $pdir/config.sh ] && source $pdir/config.sh || (echo "please configure: copy config.sh.orig => config.sh and set token." && exit 1)
+[ -f $pdir/functions.sh ] && source $pdir/functions.sh || ( echo "err... sorry I must go!" && exit 1)
 
 #### functions
 
@@ -36,7 +36,7 @@ run_daemon()
   get_name
   bot_username=$res
   echo "bot_username: $bot_username"
-  #[ $enable_notify_login -eq 1 ] && ./$0 -t "$bot_username started"
+  #[ $enable_notify_login -eq 1 ] && send_message_all "$bot_username started"
 
   OFFSET=0
   PREV_TIME=0
@@ -49,6 +49,11 @@ run_daemon()
 
     echo "recv: $FROM $MESSAGE"
 
+    if [ "$FROM" != "$OWNER" ]; then
+      msg="I can't talk to you, sorry!"
+      continue
+    fi
+
     CURR_TIME=`date +%s` #CURR_TIME=$((10#`date +%s`))
     OFFSET=$((OFFSET+1))
 
@@ -60,12 +65,13 @@ run_daemon()
       echo "cmd: \"$cmd\" args: \"$args\""
       command_found=no
       if [ $enable_commands -eq 1 ]; then
-        for f in $modules_dir/* ; do
+        for f in $pdir/$modules_dir/* ; do
+            #f="$pdir/$modules_dir/"$(basename $f)
             [ -d $f ] && continue
             if grep -q "'$cmd')" "$f"; then  # or $cmd| or |$cmd
               echo "command found at: \"$f\"" #disable blocks of commands using exec bit
               command_found=yes
-              [ -x $f ] && source ./$f || msg="command disabled"
+              [ -x $f ] && source $f || msg="command disabled"
               break
             fi
         done
@@ -157,7 +163,7 @@ if type "getopt" &> /dev/null; then
     exit 0
   fi
 else
-  echo -e "please, add getopt support.\nrunning as daemon mode..."
+  echo -e "please, add getopt support.\nrunning in as daemon..."
 fi
 
 run_daemon

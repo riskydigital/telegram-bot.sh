@@ -19,7 +19,7 @@ if [ -f /etc/openwrt_release ]; then
         fi
       ;;
       c|clients)
-        source ./modules/openwrt/show_wifi_clients.sh
+        source $pdir/$modules_dir/openwrt/show_wifi_clients.sh
       ;;
       0|off)
         wifi down
@@ -49,8 +49,14 @@ if [ -f /etc/openwrt_release ]; then
     '/dhcp')
       msg=`cat /tmp/dhcp.leases | awk '{print $3"\t"$4}' | sort`
     ;;
+    '/log')
+        msg=`logread | tail -n20`
+    ;;
     *)
       echo "command not found"
     ;;
   esac
+else
+  msg=""
+  #msg="this is not openwrt!"
 fi
