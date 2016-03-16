@@ -48,15 +48,15 @@ run_daemon()
 
     echo "recv: $FROM $MESSAGE"
 
-    #TODO not working on ash
-    #CURR_TIME=$((10#`date +%s`))
+    CURR_TIME=`date +%s` #CURR_TIME=$((10#`date +%s`))
     OFFSET=$((OFFSET+1))
 
     if [ $OFFSET != 1 ]; then
       echo "$OFFSET" > $last_offset_file
-      cmd=${MESSAGE} #[0]}
-      args="${MESSAGE}" #[@]:1}")
-      echo "$cmd"
+      # sorry, busybox's ash does not support arrays
+      cmd=`echo $MESSAGE | awk '{print $1}'`
+      args=`echo $MESSAGE | awk '{$1=""; print $0}' | cut -c2-`
+      echo "cmd: \"$cmd\" args: \"$args\""
       command_found=no
       if [ $enable_commands -eq 1 ]; then
         for f in $modules_dir/* ; do
@@ -120,44 +120,43 @@ opt_message()
 #### process parameters
 
 quiet_flag=no
-daemon_flag=no
+daemon_flag=yes
 markdown_flag=no
 
-if [ ! -x getopt ]; then
-  run_daemon
-  exit 0
-fi
+if type "getopt" &> /dev/null; then
+  if ! options=$(getopt -o hvqDmt:f: -l \
+               help,version,quiet,daemon,markdown,text:,file:  -- "$@")
+  then
+      exit 1
+  fi
 
-if ! options=$(getopt -o hvqDmt:f: -l \
-             help,version,quiet,daemon,markdown,text:,file:  -- "$@")
-then
-    exit 1
-fi
+  set -- $options
 
-set -- $options
+  while [ $# -gt 0 ]
+  do
+    case $1 in
+      -t|--text) shift; text="$1";;
+      -f|--file) shift; file="$*";;
+      -h|--help) opt_help ;;
+      -v|--version) opt_version ;;
+      -q|--quiet) quiet_flag=yes;;
+      -D|--daemon) daemon_flag=yes;;
+      -m|--markdown) markdown_flag=yes;;
+      (--) shift; break;;
+      (-*) echo "$PNAME: error - unrecognized option $1" 1>&2; exit 1;;
+      (*) break;;
+    esac
+    shift
+  done
 
-while [ $# -gt 0 ]
-do
-  case $1 in
-    -t|--text) shift; text="$1";;
-    -f|--file) shift; file="$*";;
-    -h|--help) opt_help ;;
-    -v|--version) opt_version ;;
-    -q|--quiet) quiet_flag=yes;;
-    -D|--daemon) daemon_flag=yes;;
-    -m|--markdown) markdown_flag=yes;;
-    (--) shift; break;;
-    (-*) echo "$PNAME: error - unrecognized option $1" 1>&2; exit 1;;
-    (*) break;;
-  esac
-  shift
-done
+  #### execute actions
 
-#### execute actions
-
-if [ $daemon_flag == no ]; then
-  opt_message
-  exit 0
+  if [ $daemon_flag == no ]; then
+    opt_message
+    exit 0
+  fi
 else
-  run_daemon
+  echo -e "please, add getopt support.\nrunning as daemon mode..."
 fi
+
+run_daemon
