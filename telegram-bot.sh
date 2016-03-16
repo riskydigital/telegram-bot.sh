@@ -49,13 +49,13 @@ run_daemon()
 
     echo "recv: $FROM $MESSAGE"
 
-    if [ "$FROM" != "$OWNER" ]; then
-      msg="I can't talk to you, sorry!"
-      continue
-    fi
-
     CURR_TIME=`date +%s` #CURR_TIME=$((10#`date +%s`))
     OFFSET=$((OFFSET+1))
+
+    if [ ! "$FROM" == "\"$OWNER\"" ]; then
+      echo "you are not the owner!"
+      continue
+    fi
 
     if [ $OFFSET != 1 ]; then
       echo "$OFFSET" > $last_offset_file
