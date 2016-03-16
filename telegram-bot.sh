@@ -6,7 +6,7 @@
 # http://github.com/viralex/telegram-bot.sh
 # for ash you need to enable getopt option and -l option in busybox
 
-PNAME="telegram-bot.sh"
+PNAME=`basename $0`
 VERSION="0.1"
 
 #### init
@@ -24,7 +24,8 @@ opt_version()
 
 opt_help()
 {
-  echo -e "help:\n"
+  echo -e "$PNAME-$VERSION"
+  echo -e "\nhelp:\n"
   exit 0
 }
 
@@ -60,7 +61,7 @@ run_daemon()
       command_found=no
       if [ $enable_commands -eq 1 ]; then
         for f in $modules_dir/* ; do
-            echo $f
+            [ -d $f ] && continue
             if grep -q "'$cmd')" "$f"; then  # or $cmd| or |$cmd
               echo "command found at: \"$f\"" #disable blocks of commands using exec bit
               command_found=yes
