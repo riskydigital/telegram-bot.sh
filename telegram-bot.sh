@@ -4,6 +4,7 @@
 # http://github.com/topkecleon/bashbot
 # http://github.com/RG72/telegram-bot-bash
 # http://github.com/viralex/telegram-bot.sh
+# for ash you need to enable getopt option and -l option in busybox
 
 PNAME="telegram-bot.sh"
 VERSION="0.1"
@@ -15,26 +16,26 @@ VERSION="0.1"
 
 #### functions
 
-function opt_version
+opt_version()
 {
   echo -e "$PNAME-$VERSION"
   exit 0
 }
 
-function opt_help
+opt_help()
 {
   echo -e "help:\n"
   exit 0
 }
 
-function run_daemon
+run_daemon()
 {
   echo "bot_dir: "$(pwd)
 
   get_name
   bot_username=$res
   echo "bot_username: $bot_username"
-  [ $enable_notify_login -eq 1 ] && ./$0 -t "$bot_username started"
+  #[ $enable_notify_login -eq 1 ] && ./$0 -t "$bot_username started"
 
   OFFSET=0
   PREV_TIME=0
@@ -45,18 +46,21 @@ function run_daemon
       [ $? == 0 ] && break;
     done
 
-    CURR_TIME=$((10#`date +%s`))
+    echo "recv: $FROM $MESSAGE"
+
+    #TODO not working on ash
+    #CURR_TIME=$((10#`date +%s`))
     OFFSET=$((OFFSET+1))
 
     if [ $OFFSET != 1 ]; then
       echo "$OFFSET" > $last_offset_file
-      cmd=${MESSAGE[0]}
-      args=("${MESSAGE[@]:1}")
-      echo "recv: $FROM $MESSAGE"
-
+      cmd=${MESSAGE} #[0]}
+      args="${MESSAGE}" #[@]:1}")
+      echo "$cmd"
       command_found=no
       if [ $enable_commands -eq 1 ]; then
         for f in $modules_dir/* ; do
+            echo $f
             if grep -q "'$cmd')" "$f"; then  # or $cmd| or |$cmd
               echo "command found at: \"$f\"" #disable blocks of commands using exec bit
               command_found=yes
@@ -77,19 +81,19 @@ function run_daemon
       fi
     fi
 
-    elapsed=$((CURR_TIME-PREV_TIME))
-    if [ $elapsed -le $standby ]; then
-      if [ $cycle_sleep -gt 0 ]; then
+    #elapsed=$((CURR_TIME-PREV_TIME))
+    #if [ $elapsed -le $standby ]; then
+    #  if [ $cycle_sleep -gt 0 ]; then
         sleep $cycle_sleep
-      fi
-    else
-      sleep $standby_sleep
-    fi
+    #  fi
+    #else
+    #  sleep $standby_sleep
+    #fi
   }
   done
 }
 
-function opt_message
+opt_message()
 {
   s=0
   chats=`ls $chat_dir"/"` &>/dev/null
@@ -118,6 +122,11 @@ function opt_message
 quiet_flag=no
 daemon_flag=no
 markdown_flag=no
+
+if [ ! -x getopt ]; then
+  run_daemon
+  exit 0
+fi
 
 if ! options=$(getopt -o hvqDmt:f: -l \
              help,version,quiet,daemon,markdown,text:,file:  -- "$@")
