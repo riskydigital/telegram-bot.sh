@@ -142,7 +142,7 @@ if type "getopt" &> /dev/null; then
   while [ $# -gt 0 ]
   do
     case $1 in
-      -t|--text) shift; text="$1";;
+      -t|--text) shift; daemon_flag=no; text="$1";;
       -f|--file) shift; file="$*";;
       -h|--help) opt_help ;;
       -v|--version) opt_version ;;
