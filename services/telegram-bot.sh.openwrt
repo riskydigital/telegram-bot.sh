@@ -15,7 +15,7 @@ start()
 			logger "$NAME is running with pid "$(cat $PIDFILE)
 		else
 			logger "$NAME is starting"
-			./$PROG -D &
+			$PROG -D &
 			echo $! > $PIDFILE
 		fi
 	fi
