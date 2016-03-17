@@ -2,9 +2,15 @@ case $cmd in
   '/info')
     msg="$PNAME-$VERSION: https://github.com/viralex/$PNAME"
   ;;
+
+  '/ping')
+    msg="pong"
+  ;;
+
   '/chatid')
     msg=$TARGET
   ;;
+
   '/lock')
     msg="locked"
     echo "locked">$lock_file
@@ -41,6 +47,7 @@ case $cmd in
   '/df')
     msg=`df -h | sed -r "s/^/\n/" | sed -r "s/\s+/\n/g"`
   ;;
+
   *)
   ;;
 esac

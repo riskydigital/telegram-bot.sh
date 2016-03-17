@@ -4,7 +4,7 @@ OWNER=""
 TMP="/tmp/tbot"
 
 chat_dir="chats"
-modules_dir="commands"
+modules_dir="modules"
 
 last_offset_file="/tmp/last_offset"
 lock_file="/tmp/lock"
