@@ -39,7 +39,7 @@ if [ -f /etc/openwrt_release ]; then
         wifi up
         uci set wireless.@wifi-iface[$wifi_device].disabled=1
         uci commit wireless
-        msg="wifi disabled"
+        msg="wifi enabled"
       ;;
       *)
         if [ $(uci get wireless.@wifi-iface[$wifi_device].disabled) -eq 0 ]; then
