@@ -1,0 +1,45 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+NAME="telegram-bot.sh"
+DIR="/root/$NAME"  #for now... /usr/local/telegram-bot.sh
+PROG="$DIR/$NAME"
+PIDFILE="/var/run/$NAME.pid"
+TMP="/tmp/$NAME"
+
+start()
+{
+  if [ -x $PROG ]; then
+		if [ -f $PIDFILE ]; then
+			logger "$NAME is running with pid "$(cat $PIDFILE)
+		else
+			logger "$NAME is starting"
+			./$PROG -D &
+			echo $! > $PIDFILE
+		fi
+	fi
+}
+
+stop()
+{
+  if [ -f $PIDFILE ]; then
+    PID=`cat $PIDFILE`
+    logger "$NAME:$PID is stopping"
+    rm $PIDFILE
+    kill $PID
+  else
+    logger "$NAME is not running"
+  fi
+}
+
+restart()
+{
+  stop
+  start
+}
+
+status()
+{
+  logger "$NAME: not implemented"
+}
