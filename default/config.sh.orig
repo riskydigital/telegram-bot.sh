@@ -1,5 +1,6 @@
 TOKEN=""
 OWNER=""
+DEVICE=$(hostname)
 
 TMP="/tmp/tbot"
 

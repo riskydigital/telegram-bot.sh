@@ -11,6 +11,10 @@ case $cmd in
     msg=$TARGET
   ;;
 
+  '/hostname')
+    msg=$DEVICE
+  ;;
+
   '/lock')
     msg="locked"
     echo "locked">$lock_file

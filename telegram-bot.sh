@@ -10,7 +10,7 @@ PNAME=`basename $0`
 VERSION="0.1"
 
 #### init
-pdir=$(dirname "$0")
+pdir=$PWD/$(dirname "$0")
 [ -f $pdir/config.sh ] && source $pdir/config.sh || (echo "please configure: copy config.sh.orig => config.sh and set token." && exit 1)
 [ -f $pdir/functions.sh ] && source $pdir/functions.sh || (echo "err... sorry I must go!" && exit 1)
 
