@@ -1,0 +1,12 @@
+[Unit]
+Description=Telegram bot written in sh
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/zrpi314/telegram-bot.sh/telegram-bot.sh -D
+RestartSec=1m
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
