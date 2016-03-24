@@ -6,13 +6,13 @@ if [ -f /etc/openwrt_release ]; then
     '/openwrt_help')
       msg=$'Openwrt module commands:\n/{wifi,dhcp}'
     ;;
-    'c'|'clients')
-        source $pdir/$modules_dir/openwrt/show_wifi_clients.sh
-      ;;
     '/wifi')
       case $args in
       h|help)
         msg=$'Allowed parameters:\n/wifi {,0,1,on,off,t,toggle,c,clients}'
+      ;;
+      'c'|'clients')
+        source $pdir/$modules_dir/openwrt/show_wifi_clients.sh
       ;;
       t|toggle)
         case $(uci get wireless.@wifi-iface[$wifi_device].disabled) in
