@@ -4,7 +4,7 @@ if [ -f /etc/openwrt_release ]; then
   #source /etc/config/telegram-bot.sh.conf
   case $cmd in
     '/openwrt_help')
-      msg=$'Openwrt module commands:\n/{wifi,dhcp}'
+      msg=$'Openwrt module commands:\n/{wifi,dhcp,dsl,log}'
     ;;
     '/wifi')
       case $args in
@@ -48,6 +48,9 @@ if [ -f /etc/openwrt_release ]; then
           msg="wifi is off"
         fi
       esac
+    ;;
+    '/dsl')
+      msg=`/etc/init.d/dsl_control status`
     ;;
     '/dhcp')
       msg=`cat /tmp/dhcp.leases | awk '{print $3"\t"$4}' | sort`

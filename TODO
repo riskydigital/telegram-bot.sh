@@ -1,0 +1,22 @@
+#TODO
+
+install
+- installer and system service installer
+
+configure
+- ask token and generate config.sh automatically
+- download JSON.sh if not existent
+  configure git repo of lib.
+- configure status files
+
+
+modify
+- status file for each chatid
+- start chat with botfather
+- multiple bots reading hostname (activate deactivate) requires status file.
+- implement config per chatid with list of admins.
+
+class of commands
+check() -> user, admin, owner
+
+- package.json
