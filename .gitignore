@@ -1,4 +1,2 @@
-config.sh
 chats/*
-modules_user/*
-/upload.sh
+upload.sh

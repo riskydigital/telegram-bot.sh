@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/home/zrpi314/telegram-bot.sh/telegram-bot.sh -D
+ExecStart=telegram-bot.sh -D
 RestartSec=1m
 Restart=on-failure
 
