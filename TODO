@@ -1,22 +1,7 @@
 #TODO
-
-install
-- installer and system service installer
-
-configure
-- ask token and generate config.sh automatically
+- package.json,setup.py ; installer
+- ask token and generate config.sh automatically if no config.
 - download JSON.sh if not existent
-  configure git repo of lib.
-- configure status files
+- class of commands check() -> user, admin, owner
+- define user level ( amin,user )
 
-
-modify
-- status file for each chatid
-- start chat with botfather
-- multiple bots reading hostname (activate deactivate) requires status file.
-- implement config per chatid with list of admins.
-
-class of commands
-check() -> user, admin, owner
-
-- package.json
