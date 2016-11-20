@@ -36,7 +36,7 @@ DEBUG_FLAG=no
 
 echoc ()
 {
-  [ $QUIET_FLAG = no ] && echo -e "\E["$1"m$2\E[0m"
+  [ $QUIET_FLAG = no ] && echo -e "\e["$1"m$2\e[0m"
 }
 
 debug () 
