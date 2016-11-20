@@ -7,7 +7,7 @@ VERSION="0.2"
 
 TOKEN=""
 OWNER=""
-OWNER_CHATID=""
+OWNER_CHAT_ID=""
 DEVICE="$HOSTNAME"
 
 SCRIPT_DIR=$(dirname $0)
@@ -24,9 +24,9 @@ REPLY_ANYONE=yes
 ENABLE_COMMANDS=yes
 ENABLE_SLEEP=yes
 
-CYCLE_SLEEP_TIME=2
-STANDBY_SLEEP_TIME=1
-STANDBY_TIME=30
+CYCLE_SLEEP_TIME=1
+STANDBY_SLEEP_TIME=30
+STANDBY_TIME=120
 TIMEOUT=10
 
 #### text output functions #####################################################
@@ -57,12 +57,12 @@ error ()
 #### telegram I/O functions ####################################################
 
 JSON="$SCRIPT_DIR/JSON.sh"
-URL_TELEGRAM='https://api.telegram.org/bot'
+TELEGRAM_URL='https://api.telegram.org/bot'
 HTTPS_EXEC="wget -qO- --no-check-certificate -T $TIMEOUT"
 
 telegram_exec()
 {
-  $HTTPS_EXEC --post-data="$2" ${URL_TELEGRAM}$TOKEN/$1
+  $HTTPS_EXEC --post-data="$2" ${TELEGRAM_URL}$TOKEN/$1
 }
 
 send_message()
@@ -73,9 +73,9 @@ send_message()
 send_message_all()
 {
   CHATS=`ls $CHAT_DIR"/"` &>/dev/null
-  for user in $CHATS; do
-    source "$CHAT_DIR/$user"
-    send_message "$CHATID" "$1"
+  for CHAT_ID in $CHATS; do
+    source "$CHAT_DIR/$CHAT_ID"
+    send_message "$CHAT_ID" "$1"
   done
 }
 
@@ -84,11 +84,13 @@ get_message()
   ret=$(telegram_exec "getUpdates?offset=$1&limit=1") &>/dev/null
 
   if [ ! "$ret" == '{"ok":true,"result":[]}' ]; then
-    CHATID=$(echo $ret | $JSON | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
-    FROM=$(echo $ret | $JSON | egrep '\["result",0,"message","from","username"\]' | cut -f 2 | cut -d '"' -f 2)
+    CHAT_ID=$(echo $ret | $JSON | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
+    USERNAME=$(echo $ret | $JSON | egrep '\["result",0,"message","from","username"\]' | cut -f 2 | cut -d '"' -f 2) # TODO handle no username
     OFFSET=$(echo $ret | $JSON | egrep '\["result",0,"update_id"\]' | cut -f 2)
     MESSAGE=$(echo $ret | $JSON -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
     MESSAGE_ID=$(echo $ret | $JSON | egrep '\["result",0,"message","message_id"\]' | cut -f 2 )
+
+    debug "CHAT_ID:\"$CHAT_ID\" USERNAME:\"$USERNAME\" OFFSET:\"$OFFSET\" MESSAGE:\"$MESSAGE\""
     return 0
   fi
   return 1
@@ -97,13 +99,11 @@ get_message()
 get_bot_username()
 {
   ret=$(telegram_exec getMe | $JSON -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2) &>/dev/null
-  BOTNAME=$ret
-  debug "bot username: $BOTNAME"
 }
 
 send_markdown_message()
 {
-  telegram_exec "$URL_TELEGRAM/sendMessage" "chat_id=$1&text=$2&parse_mode=markdown" &>/dev/null
+  telegram_exec "$TELEGRAM_URL/sendMessage" "chat_id=$1&text=$2&parse_mode=markdown" &>/dev/null
 }
 
 send_doc()
@@ -121,60 +121,72 @@ send_photo()
 opt_run_daemon()
 {
   get_bot_username
+  BOTNAME=$ret
+  debug "bot username: $BOTNAME"
 
-  [ $NOTIFY_LOGIN ] && send_message_all "$BOTNAME started"
+  [ $NOTIFY_LOGIN ] && send_message $OWNER_CHAT_ID "$BOTNAME started"
 
   OFFSET=0
-  PREV_TIME=0
+  PREV_TIME=$(date +%s)
   while true; do
-    while true; do
-      get_message $OFFSET
-      [ $? -eq 0 ] && break;
-    done
+    get_message $OFFSET &>/dev/null
+    GET_RET=$?
+    CURR_TIME=$(date +%s)
+    if [ $GET_RET -eq 0 ]; then
+      OFFSET=$((OFFSET+1))
 
-    [ -z "$FROM" ] && continue || echo "[$FROM] >> $MESSAGE"
+      if [ -n "$CHAT_ID" ]; then
+        [ -n "$USERNAME" ] && echo "[$USERNAME] >> $MESSAGE" || continue
 
-    CURR_TIME=$(date +%s) #CURR_TIME=$((10#`date +%s`))
-    OFFSET=$((OFFSET+1))
+        if [ "$USERNAME" != "$OWNER" ]; then
+          [ $NOTIFY_OWNER = yes ] && send_message "$OWNER_CHAT_ID" "user is talking to me: \"$USERNAME\" => \"$MESSAGE\""
+          [ $REPLY_ANYONE = no ] && continue # TODO reply only to selected users
+          [ -n "$CHAT_ID" ] && (echo "USERNAME=\"$USERNAME\"" > "$CHAT_DIR/$CHAT_ID")
+        fi
 
-    if [ "$FROM" != "$OWNER" ]; then
-      [ $NOTIFY_OWNER = yes ] && send_message "$OWNER_CHATID" "user is talking to me: \"$FROM\" => \"$MESSAGE\""
-      # TODO reply only to selected users
-      [ ! $REPLY_ANYONE = no ] && continue || \
-      echo "CHATID=\"$CHATID\"" >> "$CHAT_DIR/$FROM"
-    fi
-
-    if [ $OFFSET != 1 ]; then
-      # sorry, busybox's ash does not support arrays
-      COMMAND=$(echo $MESSAGE | awk '{print $1}')
-      ARGUMENTS=$(echo $MESSAGE | awk '{$1=""; print $0}' | cut -c2-)
-      found=no
-      if [ $ENABLE_COMMANDS = yes ]; then
-        for module in $MODULE_DIR/* ; do
-            [ -d $module ] && continue
-            if grep -q "'$COMMAND')" "$module"; then
-              found=yes
-              [ -x $module ] && source $module || msg="\"$module\" is disabled"
-              break
+        if [ $OFFSET != 1 ]; then
+          # sorry, busybox's ash does not support arrays
+          COMMAND=$(echo $MESSAGE | awk '{print $1}')
+          ARGUMENTS=$(echo $MESSAGE | awk '{$1=""; print $0}' | cut -c2-)
+          FOUND=no
+          if [ $ENABLE_COMMANDS = yes ]; then
+            for MODULE in $MODULE_DIR/* ; do
+                [ -d $MODULE ] && continue
+                if grep -q "'$COMMAND')" "$MODULE"; then
+                  FOUND=yes
+                  if [ -x $MODULE ]; then
+                    source $MODULE
+                  else
+                    RESPONSE="\"$MODULE\" is disabled"
+                  fi
+                  break
+                fi
+            done
+            if [ $FOUND == no ]; then
+              RESPONSE="command not found"
             fi
-        done
-        [ $found == no ] && (msg="command not found" && echo $msg)
-      fi
+          fi
 
-      if [ -n "$msg" ]; then
-        send_message "$CHATID" "$msg"
+          if [ -n "$RESPONSE" ]; then
+            PREV_TIME=$CURR_TIME
+            send_message "$CHAT_ID" "$RESPONSE"
+          fi
+        fi
       fi
-      PREV_TIME=$CURR_TIME
     fi
 
-    #elapsed=$((CURR_TIME-PREV_TIME))
-    #if [ $elapsed -le $STANDBY_TIME ]; then
-    #  if [ $CYCLE_SLEEP_TIME -gt 0 ]; then
-    sleep $CYCLE_SLEEP_TIME
-    #  fi
-    #else
-    #  sleep $STANDBY_SLEEP_TIME
-    #fi
+    if [ $ENABLE_SLEEP = yes ]; then
+      ELAPSED=$((CURR_TIME-PREV_TIME))
+      if [ $ELAPSED -le $STANDBY_TIME ]; then
+        sleep $CYCLE_SLEEP_TIME
+      else
+        debug "nothing happend in the last $STANDBY_TIME seconds -> standby for $STANDBY_SLEEP_TIME seconds ..."
+        sleep $STANDBY_SLEEP_TIME
+        debug "wake up ..."
+      fi
+    else
+      sleep $CYCLE_SLEEP_TIME
+    fi
   done
 }
 
@@ -184,21 +196,21 @@ opt_message()
     send_message_all "$TEXT"
   else
     if [ -z $DEST_USER ]; then
-      CHATID=$OWNER_CHATID
+      CHAT_ID=$OWNER_CHAT_ID
     else
       source "$CHAT_DIR/$DEST_USER"
     fi
     
     if [ -n "$TEXT" ]; then
       if [ $MARKDOWN_FLAG == no ]; then
-        send_message "$CHATID" "$TEXT"
+        send_message "$CHAT_ID" "$TEXT"
       else
-        send_markdown_message "$CHATID" "$TEXT"
+        send_markdown_message "$CHAT_ID" "$TEXT"
       fi
     elif [ -n "$FILE" ]; then
-      send_doc "$CHATID" "$FILE"
+      send_doc "$CHAT_ID" "$FILE"
     elif [ -n "$IMG" ]; then
-      send_photo "$CHATID" "$IMG"
+      send_photo "$CHAT_ID" "$IMG"
     fi
   fi
 }
