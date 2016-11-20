@@ -124,7 +124,7 @@ opt_run_daemon()
   BOTNAME=$ret
   debug "bot username: $BOTNAME"
 
-  [ $NOTIFY_LOGIN ] && send_message $OWNER_CHAT_ID "$BOTNAME started"
+  [ $NOTIFY_LOGIN = yes ] && send_message $OWNER_CHAT_ID "$BOTNAME started"
 
   OFFSET=0
   PREV_TIME=$(date +%s)
