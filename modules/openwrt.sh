@@ -39,7 +39,7 @@ if [ -f /etc/openwrt_release ]; then
         reboot
       ;;
       'c'|'clients')
-        source $pdir/$modules_dir/openwrt/show_wifi_clients.sh
+        source $MODULES_DIR/openwrt/show_wifi_clients.sh
       ;;
       t|toggle)
         case wifi_status in
