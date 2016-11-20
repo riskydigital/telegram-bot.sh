@@ -1,59 +1,59 @@
-case $cmd in
-  '/info')
-    msg="$PNAME-$VERSION: https://github.com/viralex/$PNAME"
+case $COMMAND in
+  'info')
+    RESPONSE="$PNAME-$VERSION: https://github.com/viralex/$PNAME"
   ;;
 
-  '/ping')
-    msg="pong"
+  'ping')
+    RESPONSE="pong"
   ;;
 
-  '/chatid')
-    msg=$TARGET
+  'chatid')
+    RESPONSE=$TARGET
   ;;
 
-  '/hostname')
-    msg=$DEVICE
+  'hostname')
+    RESPONSE=$DEVICE
   ;;
 
-  '/lock')
-    msg="locked"
-    echo "locked">$lock_file
+  'lock')
+    RESPONSE="locked"
+    echo "locked">$LOCK_FILE
   ;;
 
-  '/unlock')
-    msg="unlocked"
-    echo "unlocked">$lock_file
+  'unlock')
+    RESPONSE="unlocked"
+    echo "unlocked">$LOCK_FILE
   ;;
 
-  '/help')
-    msg=$'basic commands:\n/info\n/chatid'
+  'help')
+    RESPONSE=$'basic commands:\n/info\n/chatid'
   ;;
 
-  '/lsadmin')
-    msg=":"
+  'lsadmin')
+    RESPONSE=":"
   ;;
 
-  '/insadmin')
-    msg=":"
+  'insadmin')
+    RESPONSE=":"
   ;;
 
-  '/deladmin')
-    msg=":"
+  'deladmin')
+    RESPONSE=":"
   ;;
 
-  '/free')
-    msg=`free -h`
+  'free')
+    RESPONSE=`free -h`
   ;;
 
-  '/ifconfig')
-    msg=`ifconfig`
+  'ifconfig')
+    RESPONSE=`ifconfig`
   ;;
-  '/df')
-    msg=`df -h | sed -r "s/^/\n/" | sed -r "s/\s+/\n/g"`
+  'df')
+    RESPONSE=`df -h | sed -r "s/^/\n/" | sed -r "s/\s+/\n/g"`
   ;;
 
   *)
   ;;
 esac
 
-echo "basic_module: $msg"
+echo "basic_module: $RESPONSE"
