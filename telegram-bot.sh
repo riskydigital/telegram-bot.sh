@@ -60,7 +60,7 @@ if [ ! -f "JSON.sh/JSON.sh" ]; then
   git clone http://github.com/dominictarr/JSON.sh
 fi
 
-JSON="$SCRIPT_DIR/JSON.sh"
+JSON="$SCRIPT_DIR/JSON.sh/JSON.sh"
 TELEGRAM_URL='https://api.telegram.org/bot'
 HTTPS_EXEC="wget -qO- --no-check-certificate -T $TIMEOUT"
 
